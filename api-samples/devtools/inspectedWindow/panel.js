@@ -20,6 +20,7 @@ chrome.devtools.inspectedWindow.getResources((resources) => {
     }
     types[resource.type] += 1;
   });
+
   let result = `Resources on this page: 
   ${Object.entries(types)
     .map((entry) => {
@@ -29,5 +30,21 @@ chrome.devtools.inspectedWindow.getResources((resources) => {
     .join('\n')}`;
   let div = document.createElement('div');
   div.innerText = result;
+
+
+
+
+  let requests = `${chrome.devtools.network.onRequestFinished.addListener(
+    function(request) {
+        chrome.devtools.inspectedWindow.eval(
+            'console.log("Stat: " + unescape("' +
+            escape(request.request.url) + '"))');
+    }
+  )}`;
+  let requestsDiv = document.createElement('div');
+  requestsDiv.innerText = requests;
+
+
   document.body.appendChild(div);
+  document.body.appendChild(requestsDiv);
 });
